@@ -21,7 +21,7 @@ Entries before the first public release were reconstructed from the Git history.
 
 ### Changed
 
-- Upgraded `coding-agent-cli` from 0.1.0 to 0.2.0.
+- Upgraded `coding-agent-cli` from 0.1.0 to 0.2.2.
 
 ### Breaking changes
 
