@@ -1,4 +1,4 @@
-"""Repository file discovery for auggie-mcp."""
+"""Repository file discovery for codara-mcp."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from collections.abc import Iterator
 from pathlib import Path
 
 DEFAULT_MAX_BYTES = 1024 * 1024  # 1 MiB
-_ALWAYS_SKIP_DIRS = frozenset({".git", ".auggie"})
+_ALWAYS_SKIP_DIRS = frozenset({".git", ".codara"})
 
 
 def _compile_gitignore_glob(pattern: str, *, anchored: bool) -> re.Pattern[str]:
@@ -207,7 +207,7 @@ def walk_repo(
     """Yield repository-relative POSIX paths of indexable files."""
     repo = Path(repo_root)
     repo_resolved = repo.resolve()
-    auggieignore = _IgnoreRules.from_file(repo / ".auggieignore")
+    codaraignore = _IgnoreRules.from_file(repo / ".codaraignore")
 
     if _is_git_work_tree(repo):
         candidates = sorted(set(_git_candidates(repo)))
@@ -221,7 +221,7 @@ def walk_repo(
             parts[0] in _ALWAYS_SKIP_DIRS
         ):
             continue
-        if auggieignore.is_ignored(rel_posix, is_dir=False):
+        if codaraignore.is_ignored(rel_posix, is_dir=False):
             continue
 
         full_path = repo / rel_posix

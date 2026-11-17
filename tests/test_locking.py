@@ -1,11 +1,11 @@
-"""Tests for auggie_mcp.locking."""
+"""Tests for codara_mcp.locking."""
 
 import multiprocessing
 import tempfile
 import unittest
 from pathlib import Path
 
-from auggie_mcp import locking
+from codara_mcp import locking
 
 
 def _try_acquire_in_child(repo_str: str, queue: multiprocessing.Queue) -> None:

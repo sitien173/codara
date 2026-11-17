@@ -18,7 +18,7 @@ VERSION_FILES = (
 
 def test_mismatched_manifest_exits_one_and_names_file(tmp_path: Path) -> None:
     (tmp_path / "pyproject.toml").write_text(
-        '[project]\nname = "auggie-mcp"\nversion = "1.2.3"\n', encoding="utf-8"
+        '[project]\nname = "codara-mcp"\nversion = "1.2.3"\n', encoding="utf-8"
     )
     for path in VERSION_FILES:
         manifest = tmp_path / path
@@ -46,7 +46,7 @@ def test_mismatched_manifest_exits_one_and_names_file(tmp_path: Path) -> None:
 
 def test_matching_versions_exit_zero(tmp_path: Path) -> None:
     (tmp_path / "pyproject.toml").write_text(
-        '[project]\nname = "auggie-mcp"\nversion = "1.2.3"\n', encoding="utf-8"
+        '[project]\nname = "codara-mcp"\nversion = "1.2.3"\n', encoding="utf-8"
     )
     for path in VERSION_FILES:
         manifest = tmp_path / path

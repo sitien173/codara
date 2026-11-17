@@ -213,7 +213,7 @@ wheels = [
 ]
 
 [[package]]
-name = "auggie-mcp"
+name = "codara-mcp"
 version = "0.5.0"
 source = { editable = "." }
 dependencies = [

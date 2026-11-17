@@ -16,7 +16,7 @@ from unittest.mock import patch
 
 from coding_agent_cli import Outcome, Result
 
-from auggie_mcp import config, retrieval
+from codara_mcp import config, retrieval
 
 NO_HITS = {"hits": [], "index": {}, "truncated": False, "archive_path": None}
 
@@ -355,11 +355,11 @@ class RunAgentTest(unittest.TestCase):
 
     def test_importing_cli_with_invalid_config_env_does_not_load_config(self):
         result = subprocess.run(
-            [sys.executable, "-c", "import auggie_mcp.cli"],
+            [sys.executable, "-c", "import codara_mcp.cli"],
             check=False,
             capture_output=True,
             text=True,
-            env=os.environ | {"AUGGIE_DIMENSIONS": "not-an-integer"},
+            env=os.environ | {"CODARA_DIMENSIONS": "not-an-integer"},
         )
         self.assertEqual(result.returncode, 0, result.stderr)
 

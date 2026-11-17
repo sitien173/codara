@@ -5,8 +5,8 @@ against a caller-selected directory and returns the agent's final response.
 The agent receives a fixed system prompt, optional hints from an existing
 semantic index (never built or refreshed here), and the unchanged query last.
 Driver, model, reasoning, extra arguments, executable, and timeout come from
-``AUGGIE_AGENT_*`` environment variables, then the ``[agent]`` table in
-``~/.auggie/config.toml``, then built-in defaults.
+``CODARA_AGENT_*`` environment variables, then the ``[agent]`` table in
+``~/.codara/config.toml``, then built-in defaults.
 """
 
 import asyncio
@@ -22,14 +22,14 @@ from threading import BoundedSemaphore, Lock
 
 from coding_agent_cli import Outcome, Request, run
 
-from auggie_mcp.config import Config
-from auggie_mcp.semantic import semantic_search
+from codara_mcp.config import Config
+from codara_mcp.semantic import semantic_search
 
 # Thirty-minute per-invocation timeout (seconds).
 TIMEOUT_SECONDS = 1800.0
 
 # Set in the agent's environment so a retrieval started inside it is refused.
-NESTED_ENV = "AUGGIE_RETRIEVAL_ACTIVE"
+NESTED_ENV = "CODARA_RETRIEVAL_ACTIVE"
 
 RAG_TOP_K = 10
 RAG_CONTEXT_LINES = 0
@@ -409,8 +409,8 @@ async def run_agent(
     config = config or AgentConfig()
     if not config.driver:
         raise ValueError(
-            "no agent driver configured: set AUGGIE_AGENT_DRIVER or driver in "
-            "the [agent] table of ~/.auggie/config.toml"
+            "no agent driver configured: set CODARA_AGENT_DRIVER or driver in "
+            "the [agent] table of ~/.codara/config.toml"
         )
     _validate_args(config.driver, config.args)
     slots = _retrieval_slots(max_concurrent)

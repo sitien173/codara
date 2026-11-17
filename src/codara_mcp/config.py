@@ -1,4 +1,4 @@
-"""Frozen configuration loader for auggie-mcp."""
+"""Frozen configuration loader for codara-mcp."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
-CONFIG_PATH = Path("~/.auggie/config.toml")
+CONFIG_PATH = Path("~/.codara/config.toml")
 
 REMOVED_SECTIONS = frozenset({"search", "confidence", "rerank", "cache", "watch", "jev"})
 REMOVED_KEYS = frozenset({("voyage", "chars_per_token")})
@@ -94,24 +94,24 @@ class Config:
 
 # (section, key) -> (env_var, kind, default)
 _SCHEMA: dict[tuple[str, str], tuple[str, str, Any]] = {
-    ("embedding", "model"): ("AUGGIE_MODEL", "string", "voyage-code-3"),
-    ("embedding", "dimensions"): ("AUGGIE_DIMENSIONS", "integer", 1024),
-    ("embedding", "batch_size"): ("AUGGIE_BATCH_SIZE", "integer", 128),
-    ("voyage", "timeout_s"): ("AUGGIE_VOYAGE_TIMEOUT", "float", 120.0),
-    ("voyage", "retries"): ("AUGGIE_VOYAGE_RETRIES", "integer", 5),
-    ("chunking", "lines"): ("AUGGIE_CHUNK_LINES", "integer", 30),
-    ("chunking", "overlap_lines"): ("AUGGIE_OVERLAP_LINES", "integer", 15),
-    ("index", "timeout_s"): ("AUGGIE_INDEX_TIMEOUT_S", "float", 1800.0),
-    ("telemetry", "enabled"): ("AUGGIE_TELEMETRY", "boolean", True),
-    ("telemetry", "dir"): ("AUGGIE_TELEMETRY_DIR", "path", None),
-    ("telemetry", "retention_days"): ("AUGGIE_TELEMETRY_RETENTION_DAYS", "integer", 30),
-    ("retrieval", "max_concurrent"): ("AUGGIE_RETRIEVAL_MAX_CONCURRENT", "integer", 2),
-    ("agent", "driver"): ("AUGGIE_AGENT_DRIVER", "string", None),
-    ("agent", "model"): ("AUGGIE_AGENT_MODEL", "string", None),
-    ("agent", "reasoning"): ("AUGGIE_AGENT_REASONING", "string", None),
-    ("agent", "args"): ("AUGGIE_AGENT_ARGS", "args", ()),
-    ("agent", "executable"): ("AUGGIE_AGENT_EXECUTABLE", "string", None),
-    ("agent", "timeout_s"): ("AUGGIE_AGENT_TIMEOUT_S", "float", 1800.0),
+    ("embedding", "model"): ("CODARA_MODEL", "string", "voyage-code-3"),
+    ("embedding", "dimensions"): ("CODARA_DIMENSIONS", "integer", 1024),
+    ("embedding", "batch_size"): ("CODARA_BATCH_SIZE", "integer", 128),
+    ("voyage", "timeout_s"): ("CODARA_VOYAGE_TIMEOUT", "float", 120.0),
+    ("voyage", "retries"): ("CODARA_VOYAGE_RETRIES", "integer", 5),
+    ("chunking", "lines"): ("CODARA_CHUNK_LINES", "integer", 30),
+    ("chunking", "overlap_lines"): ("CODARA_OVERLAP_LINES", "integer", 15),
+    ("index", "timeout_s"): ("CODARA_INDEX_TIMEOUT_S", "float", 1800.0),
+    ("telemetry", "enabled"): ("CODARA_TELEMETRY", "boolean", True),
+    ("telemetry", "dir"): ("CODARA_TELEMETRY_DIR", "path", None),
+    ("telemetry", "retention_days"): ("CODARA_TELEMETRY_RETENTION_DAYS", "integer", 30),
+    ("retrieval", "max_concurrent"): ("CODARA_RETRIEVAL_MAX_CONCURRENT", "integer", 2),
+    ("agent", "driver"): ("CODARA_AGENT_DRIVER", "string", None),
+    ("agent", "model"): ("CODARA_AGENT_MODEL", "string", None),
+    ("agent", "reasoning"): ("CODARA_AGENT_REASONING", "string", None),
+    ("agent", "args"): ("CODARA_AGENT_ARGS", "args", ()),
+    ("agent", "executable"): ("CODARA_AGENT_EXECUTABLE", "string", None),
+    ("agent", "timeout_s"): ("CODARA_AGENT_TIMEOUT_S", "float", 1800.0),
 }
 
 _SECTIONS = frozenset(section for section, _ in _SCHEMA)

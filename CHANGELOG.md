@@ -8,13 +8,21 @@ Entries before the first public release were reconstructed from the Git history.
 
 ## [Unreleased]
 
+### Rename breaking changes
+
+- The project is renamed to Codara. The package is `codara-mcp`, the module is `codara_mcp`, and the CLI command is `codara`.
+- Environment variables use the `CODARA_` prefix. Configuration loads from `~/.codara/config.toml`.
+- The index directory is `.codara/` and the ignore file is `.codaraignore`. Rename existing `.auggie/` directories and `.auggieignore` files, or rebuild the index.
+- Telemetry is stored under `codara-mcp/telemetry` in the state directory.
+- The repository URL is `https://github.com/sitien173/codara-mcp`.
+
 ### SQLite-only rewrite breaking changes
 
 - Removed `codebase_search`; use the client agent's built-in grep for exact matches and `semantic_search` for concept search.
 - Removed the ripgrep dependency.
 - Removed the `goal` parameter from `codebase_retrieval`.
 - Removed Jev and TypeSafe output processing.
-- The new index file `.auggie/index-v2.sqlite` requires a one-time full re-embed. Older `.auggie/` files are not deleted automatically and must be removed manually if no longer needed.
+- The new index file `.codara/index-v2.sqlite` requires a one-time full re-embed. Older `.codara/` files are not deleted automatically and must be removed manually if no longer needed.
 - Reduced the CLI to `index`, `status`, and `stats`.
 - Removed configuration keys warn once at startup and are ignored.
 - The server accepts the legacy `initialize` handshake.
@@ -26,8 +34,8 @@ Entries before the first public release were reconstructed from the Git history.
 ### Breaking changes
 
 - The server accepts the legacy `initialize` handshake alongside `server/discover`.
-- There is no default agent driver. Set `AUGGIE_AGENT_DRIVER` or `driver` in the `[agent]` table of `~/.auggie/config.toml`.
-- `AUGGIE_*` settings are read from `config.toml` sections.
+- There is no default agent driver. Set `CODARA_AGENT_DRIVER` or `driver` in the `[agent]` table of `~/.codara/config.toml`.
+- `CODARA_*` settings are read from `config.toml` sections.
 
 ### Added
 
@@ -38,7 +46,7 @@ Entries before the first public release were reconstructed from the Git history.
 ### Changed
 
 - Embedding requests run in parallel across files.
-- The default `AUGGIE_VOYAGE_RETRIES` is 5 attempts.
+- The default `CODARA_VOYAGE_RETRIES` is 5 attempts.
 - The retrieval system prompt requires a fixed Answer, Evidence, and Inferences format.
 
 ### Fixed
@@ -52,38 +60,38 @@ Entries before the first public release were reconstructed from the Git history.
 ### Breaking changes
 
 - `codebase_search` parameter `pattern` is renamed to `query`.
-- `auggie_query`, `auggie_context`, and `auggie_status` are removed. Use `codebase_search` with `mode=semantic` and `index_status`.
+- `codara_query`, `codara_context`, and `codara_status` are removed. Use `codebase_search` with `mode=semantic` and `index_status`.
 - `codebase_retrieval` no longer refreshes the index. Call `index_update` when `index_status` reports staleness.
-- `auggie watch` uses `index.lock` instead of `watch.lock`.
+- `codara watch` uses `index.lock` instead of `watch.lock`.
 
 ### Added
 
 - `codebase_search` options `mode=exact|semantic`, `top_k`, and `context_lines`. Semantic mode reports index staleness and opens the index read-only.
 - `index_status` reports index existence, counts, and staleness without changing the index.
 - `index_update` runs the indexer with a timeout, cancellation, and a shared index lock.
-- `auggie index`, `reindex`, and `watch` share one `index.lock`. A second writer fails with `INDEX_BUSY`.
+- `codara index`, `reindex`, and `watch` share one `index.lock`. A second writer fails with `INDEX_BUSY`.
 
 ## [0.4.0] - 2026-11-12
 
 ### Breaking changes
 
-- The agent runs through `coding-agent-cli` and replaces the hand-written Pi runner. Driver, model, reasoning, args, executable, and timeout resolve from `AUGGIE_AGENT_*` variables, then the `[agent]` table in `~/.auggie/config.toml`.
+- The agent runs through `coding-agent-cli` and replaces the hand-written Pi runner. Driver, model, reasoning, args, executable, and timeout resolve from `CODARA_AGENT_*` variables, then the `[agent]` table in `~/.codara/config.toml`.
 - The read-only system prompt is no longer sent in this release.
 
 ### Added
 
-- In-tree semantic search, with 13 `auggie` subcommands for index, query, maintenance, and watch.
+- In-tree semantic search, with 13 `codara` subcommands for index, query, maintenance, and watch.
 
 ### Changed
 
-- `codebase_search` and `auggie search` run ripgrep (`rg`) in place of tgrep. Search no longer refreshes an index.
+- `codebase_search` and `codara search` run ripgrep (`rg`) in place of tgrep. Search no longer refreshes an index.
 - Requires Python 3.12+ and `rg` on `PATH`.
 
 ## [0.3.0] - 2026-11-12
 
 ### Added
 
-- Local JSONL telemetry and the `auggie stats` command.
+- Local JSONL telemetry and the `codara stats` command.
 
 ### Fixed
 
@@ -106,12 +114,12 @@ Entries before the first public release were reconstructed from the Git history.
 ### Added
 
 - Initial MCP server exposing the `codebase_retrieval` tool through a Pi subprocess.
-- `auggie` command with `retrieve` and `search` subcommands.
+- `codara` command with `retrieve` and `search` subcommands.
 - Exact search through a bundled tgrep binary.
 
-[Unreleased]: https://github.com/sitien173/auggie-mcp/compare/v0.5.0...HEAD
-[0.5.0]: https://github.com/sitien173/auggie-mcp/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/sitien173/auggie-mcp/compare/v0.3.0...v0.4.0
-[0.3.0]: https://github.com/sitien173/auggie-mcp/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/sitien173/auggie-mcp/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/sitien173/auggie-mcp/releases/tag/v0.1.0
+[Unreleased]: https://github.com/sitien173/codara-mcp/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/sitien173/codara-mcp/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/sitien173/codara-mcp/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/sitien173/codara-mcp/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/sitien173/codara-mcp/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/sitien173/codara-mcp/releases/tag/v0.1.0

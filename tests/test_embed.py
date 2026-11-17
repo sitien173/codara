@@ -1,4 +1,4 @@
-"""Unit tests for auggie_mcp.embed."""
+"""Unit tests for codara_mcp.embed."""
 
 from __future__ import annotations
 
@@ -9,8 +9,8 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from auggie_mcp.config import Config, EmbeddingConfig, VoyageConfig
-from auggie_mcp.embed import (
+from codara_mcp.config import Config, EmbeddingConfig, VoyageConfig
+from codara_mcp.embed import (
     EmbedError,
     MissingApiKeyError,
     VoyageEmbedder,
@@ -236,7 +236,7 @@ def test_fake_embedder_deterministic_and_counts() -> None:
 
 
 def test_batches_split_by_character_budget() -> None:
-    import auggie_mcp.embed as embed_mod
+    import codara_mcp.embed as embed_mod
 
     cfg = _make_config(batch_size=128, dimensions=4)
     client = StubClient()

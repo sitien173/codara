@@ -179,8 +179,8 @@ pyrightconfig.json
 # SonarQube
 .scannerwork/
 
-# auggie semantic index
-.auggie/
+# codara semantic index
+.codara/
 
 # Agent planning records (local only)
 docs/plans/

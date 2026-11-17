@@ -1,4 +1,4 @@
-"""Unit tests for auggie_mcp.indexer."""
+"""Unit tests for codara_mcp.indexer."""
 
 from __future__ import annotations
 
@@ -8,10 +8,10 @@ from pathlib import Path
 
 import pytest
 
-from auggie_mcp.config import ChunkingConfig, Config, EmbeddingConfig
-from auggie_mcp.indexer import ModelMismatchError, index_status, index_update
-from auggie_mcp.locking import IndexBusyError, index_lock
-from auggie_mcp.store import db_path, open_read
+from codara_mcp.config import ChunkingConfig, Config, EmbeddingConfig
+from codara_mcp.indexer import ModelMismatchError, index_status, index_update
+from codara_mcp.locking import IndexBusyError, index_lock
+from codara_mcp.store import db_path, open_read
 from tests.fake_embedder import FakeEmbedder
 
 
@@ -283,7 +283,7 @@ def test_content_hash_equals_sha256_of_exact_embedded_text(tmp_path: Path) -> No
 def test_chunker_version_change_crash_after_first_batch_rechunks_remaining_on_resume(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    import auggie_mcp.indexer as indexer_mod
+    import codara_mcp.indexer as indexer_mod
 
     repo = _write_repo(tmp_path)
     (repo / "c.py").write_text("def gamma():\n    return 3\n", encoding="utf-8")
@@ -348,7 +348,7 @@ def test_index_status_opens_no_repository_files(
 
     def guarded_open(self: Path, *args: object, **kwargs: object):  # type: ignore[no-untyped-def]
         resolved = self.resolve(strict=False)
-        if resolved.is_relative_to(repo.resolve()) and ".auggie" not in resolved.parts:
+        if resolved.is_relative_to(repo.resolve()) and ".codara" not in resolved.parts:
             opened_repo_files.append(resolved)
         return real_open(self, *args, **kwargs)  # type: ignore[arg-type]
 
@@ -362,7 +362,7 @@ def test_index_status_opens_no_repository_files(
 def test_vanished_file_after_walk_is_treated_as_deleted(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    import auggie_mcp.indexer as indexer_mod
+    import codara_mcp.indexer as indexer_mod
 
     repo = _write_repo(tmp_path)
     cfg = _make_config()
@@ -512,7 +512,7 @@ def test_crashed_first_run_persists_model_key_in_first_batch(tmp_path: Path) -> 
 def test_chunker_version_not_updated_when_retained_file_unreadable(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    import auggie_mcp.indexer as indexer_mod
+    import codara_mcp.indexer as indexer_mod
 
     repo = _write_repo(tmp_path)
     cfg = _make_config()
@@ -559,20 +559,20 @@ def test_index_status_with_both_ignore_files_opens_no_candidate_files(
 ) -> None:
     repo = _write_repo(tmp_path)
     (repo / ".gitignore").write_text("*.ignored\n", encoding="utf-8")
-    (repo / ".auggieignore").write_text("*.skip\n", encoding="utf-8")
+    (repo / ".codaraignore").write_text("*.skip\n", encoding="utf-8")
     cfg = _make_config()
     embedder = FakeEmbedder(dimensions=16)
     index_update(repo, config=cfg, embedder=embedder)
 
     real_open = Path.open
     opened_candidates: list[Path] = []
-    allowed_names = {".gitignore", ".auggieignore"}
+    allowed_names = {".gitignore", ".codaraignore"}
 
     def guarded_open(self: Path, *args: object, **kwargs: object):  # type: ignore[no-untyped-def]
         resolved = self.resolve(strict=False)
         if (
             resolved.is_relative_to(repo.resolve())
-            and ".auggie" not in resolved.parts
+            and ".codara" not in resolved.parts
             and resolved.name not in allowed_names
         ):
             opened_candidates.append(resolved)
@@ -627,7 +627,7 @@ def test_unreadable_file_at_walker_level_preserves_existing_row(
 def test_rebuild_clear_increments_generation_before_walk(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    import auggie_mcp.indexer as indexer_mod
+    import codara_mcp.indexer as indexer_mod
 
     repo = _write_repo(tmp_path)
     cfg = _make_config()
@@ -655,7 +655,7 @@ def test_rebuild_clear_increments_generation_before_walk(
 def test_partial_first_index_then_chunker_change_rechunks_committed_files(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    import auggie_mcp.indexer as indexer_mod
+    import codara_mcp.indexer as indexer_mod
 
     repo = _write_repo(tmp_path)
     (repo / "c.py").write_text("def gamma():\n    return 3\n", encoding="utf-8")

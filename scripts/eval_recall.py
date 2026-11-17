@@ -1,4 +1,4 @@
-"""Recall@10 evaluation harness for auggie-mcp semantic search."""
+"""Recall@10 evaluation harness for codara-mcp semantic search."""
 
 from __future__ import annotations
 
@@ -27,9 +27,9 @@ class NewBackend:
         self._config = None
 
     def prepare(self, corpus: Path) -> None:
-        from auggie_mcp.config import load as load_config
-        from auggie_mcp.embed import VoyageEmbedder
-        from auggie_mcp.indexer import index_update
+        from codara_mcp.config import load as load_config
+        from codara_mcp.embed import VoyageEmbedder
+        from codara_mcp.indexer import index_update
 
         self._config = load_config()
         index_update(
@@ -37,7 +37,7 @@ class NewBackend:
         )
 
     def search(self, corpus: Path, query: str) -> list[str]:
-        from auggie_mcp.semantic import semantic_search
+        from codara_mcp.semantic import semantic_search
 
         seen: list[str] = []
         for top_k in self._TOP_K_STEPS:
@@ -76,7 +76,7 @@ def resolve_ref(ref: str) -> tuple[str, str]:
 
 def extract_corpus(full_sha: str) -> Path:
     """Extract a git commit tree into a fresh temporary directory."""
-    tmp_dir = Path(tempfile.mkdtemp(prefix="auggie-eval-"))
+    tmp_dir = Path(tempfile.mkdtemp(prefix="codara-eval-"))
     try:
         archive = subprocess.Popen(
             ["git", "archive", full_sha],

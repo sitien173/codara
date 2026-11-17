@@ -1,4 +1,4 @@
-"""Tests for auggie_mcp.config."""
+"""Tests for codara_mcp.config."""
 
 import dataclasses
 import logging
@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from auggie_mcp import config
+from codara_mcp import config
 
 
 class ConfigTestCase(unittest.TestCase):
@@ -95,10 +95,10 @@ max_concurrent = 4
 """
         )
         env = {
-            "AUGGIE_MODEL": "voyage-3-lite",
-            "AUGGIE_DIMENSIONS": "256",
-            "AUGGIE_RETRIEVAL_MAX_CONCURRENT": "8",
-            "AUGGIE_TELEMETRY": "0",
+            "CODARA_MODEL": "voyage-3-lite",
+            "CODARA_DIMENSIONS": "256",
+            "CODARA_RETRIEVAL_MAX_CONCURRENT": "8",
+            "CODARA_TELEMETRY": "0",
         }
         cfg = config.load(path=self.path, environ=env)
         self.assertEqual(cfg.embedding.model, "voyage-3-lite")
@@ -135,7 +135,7 @@ timeout_s = 900
         )
         cfg = config.load(
             path=self.path,
-            environ={"AUGGIE_AGENT_MODEL": "gpt-5", "AUGGIE_AGENT_ARGS": "--one 'two three'"},
+            environ={"CODARA_AGENT_MODEL": "gpt-5", "CODARA_AGENT_ARGS": "--one 'two three'"},
         )
         self.assertEqual(cfg.agent.driver, "codex")
         self.assertEqual(cfg.agent.model, "gpt-5")
@@ -208,7 +208,7 @@ retries = 7
 
     def test_invalid_env_value_raises_config_error(self):
         with self.assertRaises(config.ConfigError):
-            config.load(path=self.dir / "missing.toml", environ={"AUGGIE_DIMENSIONS": "nope"})
+            config.load(path=self.dir / "missing.toml", environ={"CODARA_DIMENSIONS": "nope"})
 
 
 def test_removed_config_warning_is_deduplicated_across_loads(tmp_path: Path) -> None:
@@ -236,10 +236,10 @@ def test_eval_new_backend_reuses_config_for_prepare_and_search(tmp_path: Path) -
     corpus.mkdir()
 
     with (
-        patch("auggie_mcp.config.load", return_value=cfg) as load_config,
-        patch("auggie_mcp.indexer.index_update") as index_update,
-        patch("auggie_mcp.embed.VoyageEmbedder", return_value=object()) as embedder,
-        patch("auggie_mcp.semantic.semantic_search", return_value={"hits": []}) as search,
+        patch("codara_mcp.config.load", return_value=cfg) as load_config,
+        patch("codara_mcp.indexer.index_update") as index_update,
+        patch("codara_mcp.embed.VoyageEmbedder", return_value=object()) as embedder,
+        patch("codara_mcp.semantic.semantic_search", return_value={"hits": []}) as search,
     ):
         backend = module.NewBackend()
         backend.prepare(corpus)

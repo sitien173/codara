@@ -7,33 +7,33 @@ import unittest
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from auggie_mcp import telemetry
+from codara_mcp import telemetry
 
 
 class ConfigTest(unittest.TestCase):
     def test_dir_precedence_explicit(self):
-        env = {"AUGGIE_TELEMETRY_DIR": "/a/b", "XDG_STATE_HOME": "/x"}
+        env = {"CODARA_TELEMETRY_DIR": "/a/b", "XDG_STATE_HOME": "/x"}
         self.assertEqual(telemetry.telemetry_dir(env), Path("/a/b"))
 
     def test_dir_precedence_xdg(self):
         env = {"XDG_STATE_HOME": "/x"}
         self.assertEqual(
-            telemetry.telemetry_dir(env), Path("/x/auggie-mcp/telemetry")
+            telemetry.telemetry_dir(env), Path("/x/codara-mcp/telemetry")
         )
 
     def test_dir_default_home(self):
         self.assertEqual(
             telemetry.telemetry_dir({}),
-            Path.home() / ".local" / "state" / "auggie-mcp" / "telemetry",
+            Path.home() / ".local" / "state" / "codara-mcp" / "telemetry",
         )
 
     def test_is_enabled(self):
         self.assertTrue(telemetry.is_enabled({}))
-        self.assertTrue(telemetry.is_enabled({"AUGGIE_TELEMETRY": "1"}))
-        self.assertFalse(telemetry.is_enabled({"AUGGIE_TELEMETRY": "0"}))
+        self.assertTrue(telemetry.is_enabled({"CODARA_TELEMETRY": "1"}))
+        self.assertFalse(telemetry.is_enabled({"CODARA_TELEMETRY": "0"}))
 
     def test_retention_days(self):
-        key = "AUGGIE_TELEMETRY_RETENTION_DAYS"
+        key = "CODARA_TELEMETRY_RETENTION_DAYS"
         self.assertEqual(telemetry.retention_days({}), 30)
         self.assertEqual(telemetry.retention_days({key: "7"}), 7)
         for bad in ("abc", "0", "-3", ""):
@@ -44,7 +44,7 @@ NOW = datetime(2026, 11, 12, 15, 4, 5, 123000, tzinfo=UTC)
 
 
 def _worker(directory, worker_id, count):
-    env = {"AUGGIE_TELEMETRY_DIR": directory}
+    env = {"CODARA_TELEMETRY_DIR": directory}
     payload = "x" * 8192
     for i in range(count):
         telemetry.append_event(
@@ -60,13 +60,13 @@ class AppendEventTest(unittest.TestCase):
         self.addCleanup(tmp.cleanup)
         self.root = Path(tmp.name)
         self.dir = self.root / "state" / "telemetry"
-        self.env = {"AUGGIE_TELEMETRY_DIR": str(self.dir)}
+        self.env = {"CODARA_TELEMETRY_DIR": str(self.dir)}
 
     def day_file(self, now=NOW):
         return self.dir / f"events-{now.strftime('%Y-%m-%d')}.jsonl"
 
     def test_kill_switch_writes_nothing(self):
-        env = {**self.env, "AUGGIE_TELEMETRY": "0"}
+        env = {**self.env, "CODARA_TELEMETRY": "0"}
         self.assertFalse(telemetry.append_event({"a": 1}, environ=env, now=NOW))
         self.assertFalse(self.dir.exists())
 
@@ -74,7 +74,7 @@ class AppendEventTest(unittest.TestCase):
         self.dir.mkdir(parents=True)
         old = self.dir / "events-2020-01-01.jsonl"
         old.write_text("{}\n")
-        env = {**self.env, "AUGGIE_TELEMETRY": "0"}
+        env = {**self.env, "CODARA_TELEMETRY": "0"}
         telemetry.prune_old_files(environ=env, now=NOW)
         self.assertTrue(old.exists())
 
@@ -128,7 +128,7 @@ class AppendEventTest(unittest.TestCase):
     def test_short_write_returns_false(self):
         from unittest import mock
 
-        with mock.patch("auggie_mcp.telemetry.os.write", return_value=1) as w:
+        with mock.patch("codara_mcp.telemetry.os.write", return_value=1) as w:
             self.assertFalse(
                 telemetry.append_event({"a": 1}, environ=self.env, now=NOW)
             )
@@ -145,7 +145,7 @@ class PruneTest(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.dir = Path(tmp.name) / "t"
-        self.env = {"AUGGIE_TELEMETRY_DIR": str(self.dir)}
+        self.env = {"CODARA_TELEMETRY_DIR": str(self.dir)}
 
     def make(self, name):
         self.dir.mkdir(parents=True, exist_ok=True)
@@ -168,7 +168,7 @@ class PruneTest(unittest.TestCase):
         self.assertTrue(bad.exists())
 
     def test_custom_retention(self):
-        env = {**self.env, "AUGGIE_TELEMETRY_RETENTION_DAYS": "5"}
+        env = {**self.env, "CODARA_TELEMETRY_RETENTION_DAYS": "5"}
         old = self.make(self.name_for(6))
         keep = self.make(self.name_for(4))
         telemetry.prune_old_files(environ=env, now=NOW)
@@ -184,7 +184,7 @@ class CallRecordTest(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.dir = Path(tmp.name) / "t"
-        self.env = {"AUGGIE_TELEMETRY_DIR": str(self.dir)}
+        self.env = {"CODARA_TELEMETRY_DIR": str(self.dir)}
 
     def read_events(self):
         files = list(self.dir.glob("events-*.jsonl"))
@@ -231,7 +231,7 @@ class CallRecordTest(unittest.TestCase):
         from unittest import mock
 
         with mock.patch(
-            "auggie_mcp.telemetry.importlib.metadata.version",
+            "codara_mcp.telemetry.importlib.metadata.version",
             side_effect=RuntimeError("boom"),
         ):
             rec = telemetry.CallRecord("cli", "t", {}, environ=self.env)
@@ -280,7 +280,7 @@ class CallRecordTest(unittest.TestCase):
         rec = telemetry.CallRecord("cli", "t", {}, environ=self.env)
         ran = []
         with mock.patch(
-            "auggie_mcp.telemetry.time.perf_counter",
+            "codara_mcp.telemetry.time.perf_counter",
             side_effect=RuntimeError("clock"),
         ), rec.stage("a"):
             ran.append(True)
@@ -292,7 +292,7 @@ class CallRecordTest(unittest.TestCase):
 
         rec = telemetry.CallRecord("cli", "t", {}, environ=self.env)
         with mock.patch(
-            "auggie_mcp.telemetry.time.perf_counter",
+            "codara_mcp.telemetry.time.perf_counter",
             side_effect=RuntimeError("clock"),
         ), self.assertRaises(ValueError) as ctx, rec.stage("a"):
             raise ValueError("x")

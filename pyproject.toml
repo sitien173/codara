@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "auggie-mcp"
+name = "codara-mcp"
 version = "0.5.0"
 description = "Python MCP server exposing codebase retrieval through a coding-agent CLI"
 readme = "README.md"
@@ -19,11 +19,11 @@ dependencies = [
 ]
 
 [project.scripts]
-auggie-mcp = "auggie_mcp.launch:server"
-auggie = "auggie_mcp.launch:cli"
+codara-mcp = "codara_mcp.launch:server"
+codara = "codara_mcp.launch:cli"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/auggie_mcp"]
+packages = ["src/codara_mcp"]
 
 [dependency-groups]
 dev = [
@@ -34,7 +34,7 @@ dev = [
 ]
 
 [tool.coverage.run]
-source = ["auggie_mcp"]
+source = ["codara_mcp"]
 branch = true
 relative_files = true
 

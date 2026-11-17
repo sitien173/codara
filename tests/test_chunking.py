@@ -1,8 +1,8 @@
-"""Tests for auggie_mcp.chunking."""
+"""Tests for codara_mcp.chunking."""
 
 import unittest
 
-from auggie_mcp import chunking
+from codara_mcp import chunking
 
 
 class ChunkingTests(unittest.TestCase):

@@ -1,1 +1,1 @@
-"""Test suite for the auggie-mcp package."""
+"""Test suite for the codara-mcp package."""

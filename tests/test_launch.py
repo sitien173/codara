@@ -13,7 +13,7 @@ from coding_agent_cli import Outcome, Result
 from mcp import Client
 from mcp.types import Implementation
 
-from auggie_mcp import config, launch, retrieval, server
+from codara_mcp import config, launch, retrieval, server
 
 SRC = str(Path(__file__).resolve().parent.parent / "src")
 
@@ -23,10 +23,10 @@ class LaunchTests(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.home = Path(tmp.name)
-        (self.home / ".auggie").mkdir()
+        (self.home / ".codara").mkdir()
 
     def run_py(self, code):
-        env = {key: value for key, value in os.environ.items() if not key.startswith("AUGGIE_")}
+        env = {key: value for key, value in os.environ.items() if not key.startswith("CODARA_")}
         env.update(HOME=str(self.home), PYTHONPATH=SRC)
         return subprocess.run(
             [sys.executable, "-c", code], cwd=self.home, env=env, check=False,
@@ -35,43 +35,43 @@ class LaunchTests(unittest.TestCase):
 
     def test_cli_loads_once_and_passes_config(self):
         proc = self.run_py(
-            "import sys,types; from auggie_mcp import launch,config; "
+            "import sys,types; from codara_mcp import launch,config; "
             "count=[0]; orig=launch.config.load; "
             "launch.config.load=lambda: (count.__setitem__(0,count[0]+1) or orig()); "
-            "fake=types.ModuleType('auggie_mcp.cli'); "
+            "fake=types.ModuleType('codara_mcp.cli'); "
             "fake.main=lambda config=None: print(config.agent.timeout_s) or 0; "
-            "sys.modules['auggie_mcp.cli']=fake; launch.cli(); print(count[0])"
+            "sys.modules['codara_mcp.cli']=fake; launch.cli(); print(count[0])"
         )
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertEqual(proc.stdout.splitlines(), ["1800.0", "1"])
 
     def test_server_loads_once_and_passes_config(self):
         proc = self.run_py(
-            "import sys,types; from auggie_mcp import launch; "
+            "import sys,types; from codara_mcp import launch; "
             "count=[0]; orig=launch.config.load; "
             "launch.config.load=lambda: (count.__setitem__(0,count[0]+1) or orig()); "
-            "fake=types.ModuleType('auggie_mcp.server'); "
+            "fake=types.ModuleType('codara_mcp.server'); "
             "fake.run=lambda cfg=None: print(cfg.agent.timeout_s); "
-            "sys.modules['auggie_mcp.server']=fake; launch.server(); print(count[0])"
+            "sys.modules['codara_mcp.server']=fake; launch.server(); print(count[0])"
         )
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertEqual(proc.stdout.splitlines(), ["1800.0", "1"])
 
     def test_invalid_config_exits_two(self):
-        (self.home / ".auggie" / "config.toml").write_text("[bogus]\nx = 1\n")
-        proc = self.run_py("from auggie_mcp import launch; launch.cli()")
+        (self.home / ".codara" / "config.toml").write_text("[bogus]\nx = 1\n")
+        proc = self.run_py("from codara_mcp import launch; launch.cli()")
         self.assertEqual(proc.returncode, 2)
-        self.assertTrue(proc.stderr.startswith("auggie: "))
+        self.assertTrue(proc.stderr.startswith("codara: "))
 
     def test_server_invalid_config_exits_two(self):
-        (self.home / ".auggie" / "config.toml").write_text("[bogus]\nx = 1\n")
-        proc = self.run_py("from auggie_mcp import launch; launch.server()")
+        (self.home / ".codara" / "config.toml").write_text("[bogus]\nx = 1\n")
+        proc = self.run_py("from codara_mcp import launch; launch.server()")
         self.assertEqual(proc.returncode, 2)
-        self.assertTrue(proc.stderr.startswith("auggie: "))
+        self.assertTrue(proc.stderr.startswith("codara: "))
 
     def test_cli_help_through_launcher_lists_supported_commands(self):
         proc = self.run_py(
-            "import sys; from auggie_mcp import launch; sys.argv=['auggie','--help']; launch.cli()"
+            "import sys; from codara_mcp import launch; sys.argv=['codara','--help']; launch.cli()"
         )
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertIn("{index,status,stats}", proc.stdout)
@@ -137,10 +137,10 @@ class LaunchTests(unittest.TestCase):
         self.assertEqual(len(event_files), 1)
         self.assertEqual(len(event_files[0].read_text().splitlines()), 2)
 
-    def test_import_does_not_import_legacy_auggie(self):
+    def test_import_does_not_import_legacy_codara(self):
         proc = self.run_py(
-            "import sys,auggie_mcp.launch; "
-            "print([name for name in sys.modules if name == 'auggie' or name.startswith('auggie.')])"
+            "import sys,codara_mcp.launch; "
+            "print([name for name in sys.modules if name == 'codara' or name.startswith('codara.')])"
         )
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertEqual(proc.stdout.strip(), "[]")

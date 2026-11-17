@@ -9,9 +9,9 @@ import sys
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from auggie_mcp import config as config_module
-from auggie_mcp import embed, indexer, telemetry
-from auggie_mcp.locking import IndexBusyError
+from codara_mcp import config as config_module
+from codara_mcp import embed, indexer, telemetry
+from codara_mcp.locking import IndexBusyError
 
 EXIT_BUSY = 3
 
@@ -47,7 +47,7 @@ def _parse_since(value: str) -> timedelta:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = _ArgumentParser(
-        prog="auggie",
+        prog="codara",
         description="Maintain the SQLite index and inspect local telemetry.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -214,7 +214,7 @@ def main(argv=None, *, config=None, embedder=None) -> int:
             raise FileNotFoundError(f"repository directory does not exist: {args.repository}")
         if args.command == "index":
             # CLI-only injection keeps subprocess error-channel coverage offline.
-            if os.environ.get("AUGGIE_TEST_INDEX_EMBED_ERROR_STATUS") == "429":
+            if os.environ.get("CODARA_TEST_INDEX_EMBED_ERROR_STATUS") == "429":
                 raise embed.EmbedError("test-injected embedding failure", status=429)
             result = indexer.index_update(repo, config=cfg, embedder=embedder, rebuild=args.rebuild)
         else:

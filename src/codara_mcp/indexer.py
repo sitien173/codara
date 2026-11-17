@@ -11,13 +11,13 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from auggie_mcp.chunking import CHUNKER_VERSION, Chunk, chunk_file
-from auggie_mcp.config import Config
-from auggie_mcp.config import load as load_config
-from auggie_mcp.embed import Embedder, VoyageEmbedder
-from auggie_mcp.locking import index_lock
-from auggie_mcp.store import db_path, encode_vector, open_read, open_write
-from auggie_mcp.walk import _is_binary, walk_repo
+from codara_mcp.chunking import CHUNKER_VERSION, Chunk, chunk_file
+from codara_mcp.config import Config
+from codara_mcp.config import load as load_config
+from codara_mcp.embed import Embedder, VoyageEmbedder
+from codara_mcp.locking import index_lock
+from codara_mcp.store import db_path, encode_vector, open_read, open_write
+from codara_mcp.walk import _is_binary, walk_repo
 
 _ORPHAN_RETENTION_SECONDS = 30 * 86400
 _SQLITE_IN_CHUNK = 900
@@ -229,7 +229,7 @@ def index_update(
     now_fn: Callable[[], float] | None = None,
     after_batch_hook: Callable[[int], None] | None = None,
 ) -> dict[str, Any]:
-    """Incrementally index a repository into ``<repo>/.auggie/index-v2.sqlite``."""
+    """Incrementally index a repository into ``<repo>/.codara/index-v2.sqlite``."""
     started = time.monotonic()
     repo = Path(repo_root)
     cfg = config or load_config()
@@ -479,11 +479,11 @@ def _entry_bytes(entry: Path) -> int:
 
 
 def _list_legacy_files(repo: Path) -> list[dict[str, Any]]:
-    auggie_dir = repo / ".auggie"
-    if not auggie_dir.is_dir():
+    codara_dir = repo / ".codara"
+    if not codara_dir.is_dir():
         return []
     entries: list[dict[str, Any]] = []
-    for entry in sorted(auggie_dir.iterdir(), key=lambda p: p.name):
+    for entry in sorted(codara_dir.iterdir(), key=lambda p: p.name):
         if entry.name in _V2_INDEX_ENTRIES:
             continue
         entries.append(

@@ -1,4 +1,4 @@
-"""Tests for auggie_mcp.store."""
+"""Tests for codara_mcp.store."""
 
 import sqlite3
 import tempfile
@@ -7,7 +7,7 @@ from pathlib import Path
 
 import numpy as np
 
-from auggie_mcp import store
+from codara_mcp import store
 
 
 class StoreTestCase(unittest.TestCase):

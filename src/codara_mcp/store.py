@@ -1,4 +1,4 @@
-"""SQLite storage foundation for auggie-mcp."""
+"""SQLite storage foundation for codara-mcp."""
 
 from __future__ import annotations
 
@@ -57,7 +57,7 @@ class StoreError(RuntimeError):
 
 def db_path(repo_root: Path | str) -> Path:
     """Return the path to the SQLite index file for a repository."""
-    return Path(repo_root) / ".auggie" / "index-v2.sqlite"
+    return Path(repo_root) / ".codara" / "index-v2.sqlite"
 
 
 def _check_version(conn: sqlite3.Connection, path: Path) -> int:

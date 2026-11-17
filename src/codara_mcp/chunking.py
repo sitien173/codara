@@ -1,4 +1,4 @@
-"""Line-window text chunker for auggie-mcp."""
+"""Line-window text chunker for codara-mcp."""
 
 from __future__ import annotations
 

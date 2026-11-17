@@ -1,4 +1,4 @@
-"""Tests for auggie_mcp.walk."""
+"""Tests for codara_mcp.walk."""
 
 import os
 import subprocess
@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from auggie_mcp import walk
+from codara_mcp import walk
 
 
 def _git(repo: Path, *args: str) -> None:
@@ -63,18 +63,18 @@ class WalkGitTests(unittest.TestCase):
         (self.repo / "secret.txt").write_text("no\n", encoding="utf-8")
         # Global excludes (configured in isolated GIT_CONFIG_GLOBAL)
         (self.repo / "b.global_skip").write_text("no\n", encoding="utf-8")
-        # .auggieignore: directory with trailing slash, directory without slash,
+        # .codaraignore: directory with trailing slash, directory without slash,
         # anchored pattern, and negation re-including a file
-        (self.repo / ".auggieignore").write_text(
-            "auggie_skip/\n"
+        (self.repo / ".codaraignore").write_text(
+            "codara_skip/\n"
             "private\n"
             "/only_root.txt\n"
             "*.log\n"
             "!important.log\n",
             encoding="utf-8",
         )
-        (self.repo / "auggie_skip").mkdir()
-        (self.repo / "auggie_skip" / "x.py").write_text("no\n", encoding="utf-8")
+        (self.repo / "codara_skip").mkdir()
+        (self.repo / "codara_skip" / "x.py").write_text("no\n", encoding="utf-8")
         (self.repo / "private").mkdir()
         (self.repo / "private" / "secret.txt").write_text("no\n", encoding="utf-8")
         (self.repo / "only_root.txt").write_text("no\n", encoding="utf-8")
@@ -82,9 +82,9 @@ class WalkGitTests(unittest.TestCase):
         (self.repo / "sub" / "only_root.txt").write_text("yes\n", encoding="utf-8")
         (self.repo / "app.log").write_text("no\n", encoding="utf-8")
         (self.repo / "important.log").write_text("yes\n", encoding="utf-8")
-        # .auggie/ directory
-        (self.repo / ".auggie").mkdir()
-        (self.repo / ".auggie" / "index-v2.sqlite").write_text("db\n", encoding="utf-8")
+        # .codara/ directory
+        (self.repo / ".codara").mkdir()
+        (self.repo / ".codara" / "index-v2.sqlite").write_text("db\n", encoding="utf-8")
         # Binary file (NUL after 8192 text bytes)
         (self.repo / "bin.dat").write_bytes(b"a" * 8192 + b"\x00def")
         # Oversized file (> default 1 MiB)
@@ -115,11 +115,11 @@ class WalkGitTests(unittest.TestCase):
         self.assertNotIn("a.ignored", found)
         self.assertNotIn("secret.txt", found)
         self.assertNotIn("b.global_skip", found)
-        self.assertNotIn("auggie_skip/x.py", found)
+        self.assertNotIn("codara_skip/x.py", found)
         self.assertNotIn("private/secret.txt", found)
         self.assertNotIn("only_root.txt", found)
         self.assertNotIn("app.log", found)
-        self.assertNotIn(".auggie/index-v2.sqlite", found)
+        self.assertNotIn(".codara/index-v2.sqlite", found)
         self.assertNotIn("bin.dat", found)
         self.assertNotIn("big.txt", found)
         self.assertNotIn("escape.py", found)
@@ -160,11 +160,11 @@ class WalkNonGitTests(unittest.TestCase):
         self.repo = self.root / "plain"
         self.repo.mkdir()
 
-    def test_nongit_fallback_honors_gitignore_and_auggieignore(self):
+    def test_nongit_fallback_honors_gitignore_and_codaraignore(self):
         (self.repo / ".gitignore").write_text(
             "*.log\n!keep.log\nbuild/\nprivate\n/root_only.txt\n", encoding="utf-8"
         )
-        (self.repo / ".auggieignore").write_text("*.tmp\n", encoding="utf-8")
+        (self.repo / ".codaraignore").write_text("*.tmp\n", encoding="utf-8")
         (self.repo / "main.py").write_text("x = 1\n", encoding="utf-8")
         (self.repo / "app.log").write_text("log\n", encoding="utf-8")
         (self.repo / "keep.log").write_text("keep\n", encoding="utf-8")
@@ -176,8 +176,8 @@ class WalkNonGitTests(unittest.TestCase):
         (self.repo / "root_only.txt").write_text("no\n", encoding="utf-8")
         (self.repo / "nested").mkdir()
         (self.repo / "nested" / "root_only.txt").write_text("yes\n", encoding="utf-8")
-        (self.repo / ".auggie").mkdir()
-        (self.repo / ".auggie" / "state").write_text("x\n", encoding="utf-8")
+        (self.repo / ".codara").mkdir()
+        (self.repo / ".codara" / "state").write_text("x\n", encoding="utf-8")
         outside = self.root / "outside.txt"
         outside.write_text("secret\n", encoding="utf-8")
         (self.repo / "link.txt").symlink_to(outside)
@@ -191,11 +191,11 @@ class WalkNonGitTests(unittest.TestCase):
         self.assertNotIn("build/out.py", found)
         self.assertNotIn("private/secret.txt", found)
         self.assertNotIn("root_only.txt", found)
-        self.assertNotIn(".auggie/state", found)
+        self.assertNotIn(".codara/state", found)
         self.assertNotIn("link.txt", found)
 
     def test_dir_trailing_slash_does_not_exclude_regular_file(self):
-        (self.repo / ".auggieignore").write_text("target/\n", encoding="utf-8")
+        (self.repo / ".codaraignore").write_text("target/\n", encoding="utf-8")
         (self.repo / "target").write_text("regular file\n", encoding="utf-8")
         found = sorted(walk.walk_repo(self.repo))
         self.assertIn("target", found)
@@ -247,7 +247,7 @@ class IgnoreSemanticsMatchGitTests(unittest.TestCase):
 
         plain = self.root / "plain_excluded_parent"
         plain.mkdir()
-        (plain / ".auggieignore").write_text(ignore_text, encoding="utf-8")
+        (plain / ".codaraignore").write_text(ignore_text, encoding="utf-8")
         for rel in paths:
             p = plain / rel
             p.parent.mkdir(parents=True, exist_ok=True)
@@ -266,7 +266,7 @@ class IgnoreSemanticsMatchGitTests(unittest.TestCase):
 
         plain = self.root / "plain_reincluded"
         plain.mkdir()
-        (plain / ".auggieignore").write_text(ignore_text, encoding="utf-8")
+        (plain / ".codaraignore").write_text(ignore_text, encoding="utf-8")
         for rel in paths:
             p = plain / rel
             p.parent.mkdir(parents=True, exist_ok=True)
@@ -301,7 +301,7 @@ class IgnoreSemanticsMatchGitTests(unittest.TestCase):
 
         plain = self.root / "plain_globstar"
         plain.mkdir()
-        (plain / ".auggieignore").write_text(ignore_text, encoding="utf-8")
+        (plain / ".codaraignore").write_text(ignore_text, encoding="utf-8")
         for rel in paths:
             p = plain / rel
             p.parent.mkdir(parents=True, exist_ok=True)

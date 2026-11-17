@@ -1,4 +1,4 @@
-# Auggie MCP
+# Codara MCP
 
 A Python MCP server for semantic code search, index maintenance, and read-only codebase retrieval. The server exposes four tools over stdio and stores embeddings in one SQLite file per repository.
 
@@ -8,10 +8,10 @@ Requires Python 3.12+ and `uv`.
 
 ```bash
 uv sync
-uv run auggie-mcp
+uv run codara-mcp
 ```
 
-`python -m auggie_mcp` starts the same MCP server. Set `VOYAGE_API_KEY` to build an index or run semantic search. Configure an agent driver to use `codebase_retrieval`.
+`python -m codara_mcp` starts the same MCP server. Set `VOYAGE_API_KEY` to build an index or run semantic search. Configure an agent driver to use `codebase_retrieval`.
 
 ## MCP tools
 
@@ -32,40 +32,40 @@ The server has no exact-match tool. Use the client agent's built-in grep for lit
 
 ## CLI
 
-The `auggie` command provides three index-operations commands:
+The `codara` command provides three index-operations commands:
 
 ```bash
-uv run auggie index <repository> [--rebuild] [--json]
-uv run auggie status <repository>
-uv run auggie stats
+uv run codara index <repository> [--rebuild] [--json]
+uv run codara status <repository>
+uv run codara stats
 ```
 
 `index` creates or refreshes the repository index. `status` reports index state. `stats` reports local telemetry counts.
 
 ## Configuration
 
-Configuration loads non-empty environment values first, then `~/.auggie/config.toml`, then defaults. Removed keys are ignored with one startup warning per key. Unknown current keys and invalid values stop startup.
+Configuration loads non-empty environment values first, then `~/.codara/config.toml`, then defaults. Removed keys are ignored with one startup warning per key. Unknown current keys and invalid values stop startup.
 
 | TOML section | Key | Environment variable | Default |
 |---|---|---|---|
-| `[embedding]` | `model` | `AUGGIE_MODEL` | `voyage-code-3` |
-| `[embedding]` | `dimensions` | `AUGGIE_DIMENSIONS` | `1024` |
-| `[embedding]` | `batch_size` | `AUGGIE_BATCH_SIZE` | `128` |
-| `[voyage]` | `timeout_s` | `AUGGIE_VOYAGE_TIMEOUT` | `120.0` |
-| `[voyage]` | `retries` | `AUGGIE_VOYAGE_RETRIES` | `5` |
-| `[chunking]` | `lines` | `AUGGIE_CHUNK_LINES` | `30` |
-| `[chunking]` | `overlap_lines` | `AUGGIE_OVERLAP_LINES` | `15` |
-| `[index]` | `timeout_s` | `AUGGIE_INDEX_TIMEOUT_S` | `1800.0` |
-| `[telemetry]` | `enabled` | `AUGGIE_TELEMETRY` | `true` |
-| `[telemetry]` | `dir` | `AUGGIE_TELEMETRY_DIR` | `~/.local/state/auggie-mcp/telemetry` or `$XDG_STATE_HOME/auggie-mcp/telemetry` |
-| `[telemetry]` | `retention_days` | `AUGGIE_TELEMETRY_RETENTION_DAYS` | `30` |
-| `[retrieval]` | `max_concurrent` | `AUGGIE_RETRIEVAL_MAX_CONCURRENT` | `2` |
-| `[agent]` | `driver` | `AUGGIE_AGENT_DRIVER` | required for retrieval |
-| `[agent]` | `model` | `AUGGIE_AGENT_MODEL` | driver default |
-| `[agent]` | `reasoning` | `AUGGIE_AGENT_REASONING` | driver default |
-| `[agent]` | `args` | `AUGGIE_AGENT_ARGS` | `[]` |
-| `[agent]` | `executable` | `AUGGIE_AGENT_EXECUTABLE` | driver executable |
-| `[agent]` | `timeout_s` | `AUGGIE_AGENT_TIMEOUT_S` | `1800.0` |
+| `[embedding]` | `model` | `CODARA_MODEL` | `voyage-code-3` |
+| `[embedding]` | `dimensions` | `CODARA_DIMENSIONS` | `1024` |
+| `[embedding]` | `batch_size` | `CODARA_BATCH_SIZE` | `128` |
+| `[voyage]` | `timeout_s` | `CODARA_VOYAGE_TIMEOUT` | `120.0` |
+| `[voyage]` | `retries` | `CODARA_VOYAGE_RETRIES` | `5` |
+| `[chunking]` | `lines` | `CODARA_CHUNK_LINES` | `30` |
+| `[chunking]` | `overlap_lines` | `CODARA_OVERLAP_LINES` | `15` |
+| `[index]` | `timeout_s` | `CODARA_INDEX_TIMEOUT_S` | `1800.0` |
+| `[telemetry]` | `enabled` | `CODARA_TELEMETRY` | `true` |
+| `[telemetry]` | `dir` | `CODARA_TELEMETRY_DIR` | `~/.local/state/codara-mcp/telemetry` or `$XDG_STATE_HOME/codara-mcp/telemetry` |
+| `[telemetry]` | `retention_days` | `CODARA_TELEMETRY_RETENTION_DAYS` | `30` |
+| `[retrieval]` | `max_concurrent` | `CODARA_RETRIEVAL_MAX_CONCURRENT` | `2` |
+| `[agent]` | `driver` | `CODARA_AGENT_DRIVER` | required for retrieval |
+| `[agent]` | `model` | `CODARA_AGENT_MODEL` | driver default |
+| `[agent]` | `reasoning` | `CODARA_AGENT_REASONING` | driver default |
+| `[agent]` | `args` | `CODARA_AGENT_ARGS` | `[]` |
+| `[agent]` | `executable` | `CODARA_AGENT_EXECUTABLE` | driver executable |
+| `[agent]` | `timeout_s` | `CODARA_AGENT_TIMEOUT_S` | `1800.0` |
 
 Example:
 
@@ -86,11 +86,11 @@ timeout_s = 900
 
 ## Telemetry
 
-Local telemetry events record tool inputs, including queries, search patterns, and repository paths. Events are stored as JSONL files under `~/.local/state/auggie-mcp/telemetry`, or `$XDG_STATE_HOME/auggie-mcp/telemetry` when `XDG_STATE_HOME` is set. Set `AUGGIE_TELEMETRY_DIR` or `[telemetry].dir` to choose another location. Events are retained for 30 days by default; configure `AUGGIE_TELEMETRY_RETENTION_DAYS` or `[telemetry].retention_days` to change the period. Disable telemetry with `AUGGIE_TELEMETRY=0` or `[telemetry] enabled = false`.
+Local telemetry events record tool inputs, including queries, search patterns, and repository paths. Events are stored as JSONL files under `~/.local/state/codara-mcp/telemetry`, or `$XDG_STATE_HOME/codara-mcp/telemetry` when `XDG_STATE_HOME` is set. Set `CODARA_TELEMETRY_DIR` or `[telemetry].dir` to choose another location. Events are retained for 30 days by default; configure `CODARA_TELEMETRY_RETENTION_DAYS` or `[telemetry].retention_days` to change the period. Disable telemetry with `CODARA_TELEMETRY=0` or `[telemetry] enabled = false`.
 
 ## Index migration
 
-The current index is `.auggie/index-v2.sqlite`. It does not reuse earlier index formats, so the first update performs a full re-embed. Older files in `.auggie/` are not deleted automatically. Remove obsolete legacy index files manually after confirming they are no longer needed.
+The current index is `.codara/index-v2.sqlite`. It does not reuse earlier index formats, so the first update performs a full re-embed. Older files in `.codara/` are not deleted automatically. Remove obsolete legacy index files manually after confirming they are no longer needed.
 
 ## Development checks
 

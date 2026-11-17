@@ -1,4 +1,4 @@
-"""Tests for the three supported auggie CLI commands."""
+"""Tests for the three supported codara CLI commands."""
 
 import argparse
 import contextlib
@@ -13,7 +13,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import patch
 
-from auggie_mcp import cli, config, embed, indexer
+from codara_mcp import cli, config, embed, indexer
 
 
 class CliTest(unittest.TestCase):
@@ -61,7 +61,7 @@ class CliTest(unittest.TestCase):
         cfg = config.load(cfg_file, environ={})
         stdout = io.StringIO()
         with (
-            patch.dict(os.environ, {"AUGGIE_TELEMETRY_DIR": str(self.repo / "environment-telemetry")}),
+            patch.dict(os.environ, {"CODARA_TELEMETRY_DIR": str(self.repo / "environment-telemetry")}),
             contextlib.redirect_stdout(stdout),
         ):
             code = cli.main(["stats", "--json"], config=cfg)
@@ -86,11 +86,11 @@ class CliTest(unittest.TestCase):
     def test_real_cli_index_missing_directory_is_invalid_path(self):
         home = self.repo / "home"
         home.mkdir()
-        env = {key: value for key, value in os.environ.items() if not key.startswith("AUGGIE_")}
+        env = {key: value for key, value in os.environ.items() if not key.startswith("CODARA_")}
         env["HOME"] = str(home)
         missing = self.repo / "missing-repository"
         proc = subprocess.run(
-            [sys.executable, "-m", "auggie_mcp.cli", "index", "--json", str(missing)],
+            [sys.executable, "-m", "codara_mcp.cli", "index", "--json", str(missing)],
             check=False, env=env, capture_output=True, text=True, timeout=30,
         )
         self.assertEqual(proc.returncode, 2, proc.stderr)

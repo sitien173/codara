@@ -13,7 +13,7 @@ from mcp import Client
 from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import Implementation
 
-from auggie_mcp import (
+from codara_mcp import (
     config,
     embed,
     locking,
@@ -60,7 +60,7 @@ class ServerTest(unittest.TestCase):
             self.assertIsNotNone(tool.output_schema)
 
     def test_metadata_version_comes_from_distribution(self):
-        self.assertEqual(make_server().version, importlib.metadata.version("auggie-mcp"))
+        self.assertEqual(make_server().version, importlib.metadata.version("codara-mcp"))
 
     def test_index_update_and_retrieval_shapes(self):
         with patch.object(server, "_run_index_update", AsyncMock(return_value={
@@ -165,7 +165,7 @@ class ServerTest(unittest.TestCase):
         cfg = config.Config(telemetry=config.TelemetryConfig(
             enabled=False, dir=telemetry_dir, retention_days=2
         ))
-        with patch.dict(os.environ, {"AUGGIE_TELEMETRY": "1", "AUGGIE_TELEMETRY_DIR": str(telemetry_dir / "env")}):
+        with patch.dict(os.environ, {"CODARA_TELEMETRY": "1", "CODARA_TELEMETRY_DIR": str(telemetry_dir / "env")}):
             self.call(server.create_server(app_config=cfg), "index_status", {
                 "repository_path": str(self.repo)
             })
@@ -178,7 +178,7 @@ class ServerTest(unittest.TestCase):
             f'[telemetry]\nenabled = true\ndir = "{telemetry_dir}"\nretention_days = 4\n'
         )
         cfg = config.load(config_file, environ={})
-        with patch.dict(os.environ, {"AUGGIE_TELEMETRY_DIR": str(self.repo / "from-env")}):
+        with patch.dict(os.environ, {"CODARA_TELEMETRY_DIR": str(self.repo / "from-env")}):
             self.call(server.create_server(app_config=cfg), "index_status", {
                 "repository_path": str(self.repo)
             })
@@ -247,15 +247,15 @@ class ServerTest(unittest.TestCase):
 
     def test_real_cli_warning_does_not_break_structured_embed_error(self):
         home = self.repo / "home"
-        config_dir = home / ".auggie"
+        config_dir = home / ".codara"
         config_dir.mkdir(parents=True)
         (config_dir / "config.toml").write_text('[search]\nmode = "classic"\n')
         cfg = config.Config(telemetry=config.TelemetryConfig(enabled=False))
 
         with patch.dict(os.environ, {
             "HOME": str(home),
-            "AUGGIE_TEST_INDEX_EMBED_ERROR_STATUS": "429",
-            "AUGGIE_TELEMETRY": "0",
+            "CODARA_TEST_INDEX_EMBED_ERROR_STATUS": "429",
+            "CODARA_TELEMETRY": "0",
         }), self.assertRaises(ToolError) as raised:
             self.call(server.create_server(app_config=cfg), "index_update", {
                 "repository_path": str(self.repo)
@@ -276,7 +276,7 @@ class ServerTest(unittest.TestCase):
             cfg = config.Config(telemetry=config.TelemetryConfig(enabled=False))
             srv = server.create_server(app_config=cfg, repository_root=self.repo)
             with (
-                patch.dict(os.environ, {"HOME": str(self.repo.parent), "AUGGIE_TELEMETRY": "0"}),
+                patch.dict(os.environ, {"HOME": str(self.repo.parent), "CODARA_TELEMETRY": "0"}),
                 patch.object(asyncio, "create_subprocess_exec", side_effect=remove_before_cli),
                 self.assertRaisesRegex(ToolError, "INVALID_PATH"),
             ):

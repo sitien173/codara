@@ -27,26 +27,26 @@ def telemetry_dir(
         return Path(directory)
     env = os.environ if environ is None else environ
 
-    explicit = env.get("AUGGIE_TELEMETRY_DIR")
+    explicit = env.get("CODARA_TELEMETRY_DIR")
     if explicit:
         return Path(explicit)
 
     xdg_state = env.get("XDG_STATE_HOME")
     if xdg_state:
-        return Path(xdg_state) / "auggie-mcp" / "telemetry"
+        return Path(xdg_state) / "codara-mcp" / "telemetry"
 
-    return Path.home() / ".local" / "state" / "auggie-mcp" / "telemetry"
+    return Path.home() / ".local" / "state" / "codara-mcp" / "telemetry"
 
 
 def is_enabled(environ: Mapping[str, str] | None = None) -> bool:
     env = os.environ if environ is None else environ
-    return env.get("AUGGIE_TELEMETRY") != "0"
+    return env.get("CODARA_TELEMETRY") != "0"
 
 
 def retention_days(environ: Mapping[str, str] | None = None) -> int:
     env = os.environ if environ is None else environ
     try:
-        days = int(env.get("AUGGIE_TELEMETRY_RETENTION_DAYS", ""))
+        days = int(env.get("CODARA_TELEMETRY_RETENTION_DAYS", ""))
     except ValueError:
         return DEFAULT_RETENTION_DAYS
     return days if days > 0 else DEFAULT_RETENTION_DAYS
@@ -123,7 +123,7 @@ process_id = uuid.uuid4().hex
 
 def _app_version() -> str:
     try:
-        return importlib.metadata.version("auggie-mcp")
+        return importlib.metadata.version("codara-mcp")
     except Exception:  # noqa: BLE001 - package metadata is optional at runtime.
         return "unknown"
 

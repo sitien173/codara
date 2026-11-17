@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from auggie_mcp.output_limits import cleanup_archives, truncate_output
+from codara_mcp.output_limits import cleanup_archives, truncate_output
 
 
 def test_text_under_limit_is_unchanged_without_archive(tmp_path: Path) -> None:
@@ -13,7 +13,7 @@ def test_text_under_limit_is_unchanged_without_archive(tmp_path: Path) -> None:
 
     assert result == text
     assert archive_path is None
-    assert not (tmp_path / ".auggie" / "archive").exists()
+    assert not (tmp_path / ".codara" / "archive").exists()
 
 
 def test_text_over_limit_is_cut_at_line_boundary_and_archived(tmp_path: Path) -> None:
@@ -25,11 +25,11 @@ def test_text_over_limit_is_cut_at_line_boundary_and_archived(tmp_path: Path) ->
     assert result.endswith("\n")
     assert archive_path is not None
     assert Path(archive_path).read_text() == text
-    assert Path(archive_path).is_relative_to(tmp_path / ".auggie" / "archive")
+    assert Path(archive_path).is_relative_to(tmp_path / ".codara" / "archive")
 
 
 def test_archive_cleanup_runs_on_write_and_startup(tmp_path: Path) -> None:
-    archive_dir = tmp_path / ".auggie" / "archive"
+    archive_dir = tmp_path / ".codara" / "archive"
     archive_dir.mkdir(parents=True)
     old = archive_dir / "old.txt"
     recent = archive_dir / "recent.txt"
@@ -58,9 +58,9 @@ def test_public_startup_cleanup_removes_expired_archives(tmp_path: Path) -> None
     import os
     from datetime import datetime, timedelta
 
-    from auggie_mcp import output_limits
+    from codara_mcp import output_limits
 
-    archive_dir = tmp_path / ".auggie" / "archive"
+    archive_dir = tmp_path / ".codara" / "archive"
     archive_dir.mkdir(parents=True)
     expired = archive_dir / "expired.txt"
     recent = archive_dir / "recent.txt"

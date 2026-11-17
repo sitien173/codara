@@ -20,7 +20,7 @@ from mcp.server.mcpserver import Context
 from mcp.server.mcpserver.exceptions import ToolError
 from mcp.types import ToolAnnotations
 
-from auggie_mcp import (
+from codara_mcp import (
     config,
     embed,
     indexer,
@@ -201,7 +201,7 @@ async def _run_index_update(
     repository_path: str, rebuild: bool, timeout_s: float = TOOL_TIMEOUT_S
 ) -> dict[str, Any]:
     repository_path = str(_repository_path(repository_path))
-    command = [sys.executable, "-m", "auggie_mcp.cli", "index"]
+    command = [sys.executable, "-m", "codara_mcp.cli", "index"]
     if rebuild:
         command.append("--rebuild")
     command.extend(("--json", repository_path))
@@ -224,7 +224,7 @@ async def _run_index_update(
     except asyncio.CancelledError:
         await _kill_process_group(process)
         raise
-    from auggie_mcp.cli import EXIT_BUSY
+    from codara_mcp.cli import EXIT_BUSY
 
     if process.returncode == EXIT_BUSY:
         raise locking.IndexBusyError("another process holds the index lock")
@@ -299,10 +299,10 @@ def create_server(
         yield {"config": cfg}
 
     mcp = MCPServer(
-        name="auggie-mcp",
-        title="Auggie Codebase Search",
+        name="codara-mcp",
+        title="Codara Codebase Search",
         description="Semantic search, indexing, and read-only codebase retrieval.",
-        version=importlib.metadata.version("auggie-mcp"),
+        version=importlib.metadata.version("codara-mcp"),
         instructions=_INSTRUCTIONS,
         lifespan=lifespan,
         cache_hints={"tools/list": CacheHint(ttl_ms=3_600_000, scope="private")},

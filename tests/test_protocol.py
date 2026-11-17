@@ -10,7 +10,7 @@ from unittest.mock import patch
 from mcp import Client
 from mcp.types import Implementation
 
-from auggie_mcp import (
+from codara_mcp import (
     config,
     embed,
     locking,

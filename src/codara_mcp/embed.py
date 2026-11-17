@@ -10,7 +10,7 @@ from typing import Any, Protocol
 
 import numpy as np
 
-from auggie_mcp.config import Config
+from codara_mcp.config import Config
 
 # Voyage rejects a request above 120,000 tokens. A token spans at least one
 # character for mostly ASCII code, so a character budget below it bounds a request.

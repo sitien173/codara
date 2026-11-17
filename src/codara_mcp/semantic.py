@@ -11,12 +11,12 @@ from typing import Any, cast
 
 import numpy as np
 
-from auggie_mcp.config import Config
-from auggie_mcp.config import load as load_config
-from auggie_mcp.embed import Embedder, VoyageEmbedder
-from auggie_mcp.output_limits import MAX_OUTPUT_BYTES, serialize_json, truncate_output
-from auggie_mcp.store import StoreError, db_path, decode_vector, open_read
-from auggie_mcp.vectors import normalize_rows, normalize_vector
+from codara_mcp.config import Config
+from codara_mcp.config import load as load_config
+from codara_mcp.embed import Embedder, VoyageEmbedder
+from codara_mcp.output_limits import MAX_OUTPUT_BYTES, serialize_json, truncate_output
+from codara_mcp.store import StoreError, db_path, decode_vector, open_read
+from codara_mcp.vectors import normalize_rows, normalize_vector
 
 
 class IndexMissingError(RuntimeError):

@@ -16,12 +16,12 @@ class IndexBusyError(BlockingIOError):
 
 def lock_path(repo_root: Path | str) -> Path:
     """Return the path to the index lock file for a repository."""
-    return Path(repo_root) / ".auggie" / "index.lock"
+    return Path(repo_root) / ".codara" / "index.lock"
 
 
 @contextmanager
 def index_lock(repo_root: Path | str) -> Generator[Path, None, None]:
-    """Acquire an exclusive non-blocking flock on ``<repo>/.auggie/index.lock``."""
+    """Acquire an exclusive non-blocking flock on ``<repo>/.codara/index.lock``."""
     target = lock_path(repo_root)
     target.parent.mkdir(parents=True, exist_ok=True)
     fd = os.open(target, os.O_CREAT | os.O_RDWR, 0o600)

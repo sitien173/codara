@@ -1,8 +1,8 @@
 {
-  "name": "auggie-mcp",
+  "name": "codara-mcp",
   "plugins": [
     {
-      "name": "auggie-mcp",
+      "name": "codara-mcp",
       "source": {
         "source": "local",
         "path": "./plugin"

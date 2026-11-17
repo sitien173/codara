@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from auggie_mcp.vectors import normalize_rows
+from codara_mcp.vectors import normalize_rows
 
 
 def test_normalize_rows_returns_l2_normalized_float_matrix() -> None:

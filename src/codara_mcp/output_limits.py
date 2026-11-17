@@ -12,7 +12,7 @@ _ARCHIVE_RETENTION = timedelta(days=7)
 
 
 def _archive_dir(repository_path: Path | str) -> Path:
-    return Path(repository_path) / ".auggie" / "archive"
+    return Path(repository_path) / ".codara" / "archive"
 
 
 def cleanup_archives(

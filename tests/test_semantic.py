@@ -7,10 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from auggie_mcp.config import Config, EmbeddingConfig
-from auggie_mcp.indexer import index_update
-from auggie_mcp.semantic import IndexMissingError, ModelMismatchError, semantic_search
-from auggie_mcp.store import db_path
+from codara_mcp.config import Config, EmbeddingConfig
+from codara_mcp.indexer import index_update
+from codara_mcp.semantic import IndexMissingError, ModelMismatchError, semantic_search
+from codara_mcp.store import db_path
 from tests.fake_embedder import FakeEmbedder
 
 
@@ -68,7 +68,7 @@ def test_generation_reload_is_single_under_concurrent_queries(tmp_path: Path) ->
     from unittest.mock import patch
 
     with (
-        patch("auggie_mcp.semantic._read_index", wraps=__import__("auggie_mcp.semantic", fromlist=["_read_index"])._read_index) as reload_index,
+        patch("codara_mcp.semantic._read_index", wraps=__import__("codara_mcp.semantic", fromlist=["_read_index"])._read_index) as reload_index,
         concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool,
     ):
         results = list(pool.map(lambda _: semantic_search(repo, "alpha", config=config, embedder=embedder), range(8)))
@@ -81,7 +81,7 @@ def test_cache_holds_at_most_two_repositories(tmp_path: Path) -> None:
         (tmp_path / str(i)).mkdir()
         repo, config, embedder = make_repo(tmp_path / str(i), {"a.py": f"value{i}"})
         semantic_search(repo, f"value{i}", config=config, embedder=embedder)
-    from auggie_mcp.semantic import _CACHE
+    from codara_mcp.semantic import _CACHE
     assert len(_CACHE) <= 2
 
 
@@ -110,7 +110,7 @@ def test_search_database_access_is_read_only(tmp_path: Path) -> None:
     before = db.read_bytes()
     semantic_search(repo, "alpha", config=config, embedder=embedder)
     assert db.read_bytes() == before
-    from auggie_mcp.store import open_read
+    from codara_mcp.store import open_read
     with open_read(db) as conn, pytest.raises(sqlite3.OperationalError):
         conn.execute("UPDATE meta SET value = value WHERE key = 'generation'")
 
