@@ -4,7 +4,7 @@
       "command": "uvx",
       "timeout": 600,
       "description": "Semantic codebase retrieval and exact repository search",
-      "args": ["--from", "git+https://github.com/sitien173/codara-mcp", "codara-mcp"]
+      "args": ["--from", "git+https://github.com/sitien173/codara", "codara-mcp"]
     }
   }
 }
