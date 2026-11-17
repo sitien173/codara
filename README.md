@@ -137,9 +137,6 @@ The indexer follows `git ls-files` in a git work tree and `.gitignore` elsewhere
 
 Telemetry stays on your machine. Each tool call appends a JSONL event, including the query, search path, and repository path, under `~/.local/state/codara-mcp/telemetry` or `$XDG_STATE_HOME/codara-mcp/telemetry`. Events are kept for 30 days. Disable telemetry with `CODARA_TELEMETRY=0` or `[telemetry] enabled = false`.
 
-> [!NOTE]
-> **Upgrading from Auggie.** The project was renamed from `auggie-mcp` with no fallback. Rename `.auggie/` to `.codara/`, `.auggieignore` to `.codaraignore`, `~/.auggie/config.toml` to `~/.codara/config.toml`, and `AUGGIE_*` variables to `CODARA_*`, or rebuild the index with `codara index --rebuild`.
-
 ## Development
 
 ```bash
