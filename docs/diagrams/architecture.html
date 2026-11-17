@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codara architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+KR:wght@400;500;600&family=Noto+Serif+KR:wght@400&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;
+      --color-ink:     #2d3142;
+      --color-muted:   #4f5d75;
+      --color-soft:    #5a6580;
+      --color-accent:  #bf4520;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', 'Noto Serif', 'Noto Serif KR', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1280px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 1280px; display: block; }
+    .colophon {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--color-muted);
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(45,49,66,0.12);
+    }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">codara-mcp</p>
+    <h1>Codara architecture</h1>
+    <div class="diagram-container">
+      <svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="architecture-title architecture-desc">
+        <title id="architecture-title">Codara architecture</title>
+        <desc id="architecture-desc">The codara-mcp server exposes four tools to coding-agent clients, reads a local SQLite index that a separate CLI writes, and calls the Voyage AI embedding API and a read-only agent CLI.</desc>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bf4520"/></marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+        </defs>
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+        <!-- connectors first, then labels, then nodes -->
+        <path d="M368,340 L416,340" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="374.5" y="320" width="35" height="12" rx="2" fill="#f5f5f5"/><text x="392" y="329" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">STDIO</text>
+        <path d="M460,292 L460,204 Q460,196 452,196 L368,196" fill="none" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+        <rect x="383.0" y="176" width="62" height="12" rx="2" fill="#f5f5f5"/><text x="414" y="185" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">RUNS AGENT</text>
+        <path d="M572,292 L572,204 Q572,196 580,196 L664,196" fill="none" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+        <rect x="584.0" y="176" width="68" height="12" rx="2" fill="#f5f5f5"/><text x="618" y="185" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">EMBED QUERY</text>
+        <path d="M460,388 L460,476 Q460,484 452,484 L368,484" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="391.0" y="464" width="46" height="12" rx="2" fill="#f5f5f5"/><text x="414" y="473" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">APPENDS</text>
+        <path d="M572,388 L572,476 Q572,484 580,484 L664,484" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="600.5" y="464" width="35" height="12" rx="2" fill="#f5f5f5"/><text x="618" y="473" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">READS</text>
+        <path d="M616,340 L664,340" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="619.5" y="320" width="41" height="12" rx="2" fill="#f5f5f5"/><text x="640" y="329" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">SPAWNS</text>
+        <path d="M764,292 L764,244" fill="none" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+        <rect x="772" y="262" width="73" height="12" rx="2" fill="#f5f5f5"/><text x="808.5" y="271" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">EMBED CHUNKS</text>
+        <path d="M764,388 L764,436" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="772" y="406" width="41" height="12" rx="2" fill="#f5f5f5"/><text x="792.5" y="415" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">WRITES</text>
+        <path d="M864,340 L912,340" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <rect x="870.5" y="320" width="35" height="12" rx="2" fill="#f5f5f5"/><text x="888" y="329" fill="#5a6580" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">WALKS</text>
+        <rect x="168" y="148" width="200" height="96" rx="6" fill="#f5f5f5"/>
+        <rect x="168" y="148" width="200" height="96" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.3)" stroke-width="1"/>
+        <rect x="180" y="160" width="40" height="16" rx="2" fill="none" stroke="rgba(45,49,66,0.4)" stroke-width="0.8"/>
+        <text x="200.0" y="171" fill="#2d3142" font-size="8" font-weight="500" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">AGENT</text>
+        <text x="180" y="200" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif">Agent CLI</text>
+        <text x="180" y="218" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">claude · codex · agy · pi</text>
+        <text x="180" y="230" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">read-only · runs in repo</text>
+        <rect x="168" y="292" width="200" height="96" rx="6" fill="#f5f5f5"/>
+        <rect x="168" y="292" width="200" height="96" rx="6" fill="rgba(79,93,117,0.1)" stroke="#5a6580" stroke-width="1"/>
+        <rect x="180" y="304" width="46" height="16" rx="2" fill="none" stroke="rgba(79,93,117,0.4)" stroke-width="0.8"/>
+        <text x="203.0" y="315" fill="#2d3142" font-size="8" font-weight="500" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">CLIENT</text>
+        <text x="180" y="344" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif">MCP client agent</text>
+        <text x="180" y="362" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">Claude Code · Codex · agy · Pi</text>
+        <text x="180" y="374" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">stdio transport (MCP)</text>
+        <rect x="168" y="436" width="200" height="96" rx="6" fill="#f5f5f5"/>
+        <rect x="168" y="436" width="200" height="96" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+        <rect x="180" y="448" width="40" height="16" rx="2" fill="none" stroke="rgba(79,93,117,0.4)" stroke-width="0.8"/>
+        <text x="200.0" y="459" fill="#2d3142" font-size="8" font-weight="500" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">STORE</text>
+        <text x="180" y="488" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif">Telemetry</text>
+        <text x="180" y="506" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">JSONL · one event per tool call</text>
+        <text x="180" y="518" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">~/.local/state/codara-mcp</text>
+        <rect x="416" y="292" width="200" height="96" rx="6" fill="#f5f5f5"/>
+        <rect x="416" y="292" width="200" height="96" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1"/>
+        <rect x="428" y="304" width="46" height="16" rx="2" fill="none" stroke="rgba(191,69,32,0.4)" stroke-width="0.8"/>
+        <text x="451.0" y="315" fill="#2d3142" font-size="8" font-weight="500" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">SERVER</text>
+        <text x="428" y="344" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif">codara-mcp server</text>
+        <text x="428" y="357" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">semantic_search</text>
+        <text x="428" y="368" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">index_status · index_update</text>
+        <text x="428" y="379" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">codebase_retrieval</text>
+        <rect x="664" y="148" width="200" height="96" rx="6" fill="#f5f5f5"/>
+        <rect x="664" y="148" width="200" height="96" rx="6" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.3)" stroke-width="1"/>
+        <rect x="676" y="160" width="29" height="16" rx="2" fill="none" stroke="rgba(45,49,66,0.4)" stroke-width="0.8"/>
+        <text x="690.5" y="171" fill="#2d3142" font-size="8" font-weight="500" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">API</text>
+        <text x="676" y="200" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif">Voyage AI API</text>
+        <text x="676" y="218" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">voyage-code-3 · 1024 dims</text>
+        <text x="676" y="230" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">needs VOYAGE_API_KEY</text>
+        <rect x="664" y="292" width="200" height="96" rx="6" fill="#f5f5f5"/>
+        <rect x="664" y="292" width="200" height="96" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <rect x="676" y="304" width="29" height="16" rx="2" fill="none" stroke="rgba(45,49,66,0.4)" stroke-width="0.8"/>
+        <text x="690.5" y="315" fill="#2d3142" font-size="8" font-weight="500" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">CLI</text>
+        <text x="676" y="344" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif">codara CLI</text>
+        <text x="676" y="362" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">index · status · stats</text>
+        <text x="676" y="374" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">holds index.lock (flock)</text>
+        <rect x="664" y="436" width="200" height="96" rx="6" fill="#f5f5f5"/>
+        <rect x="664" y="436" width="200" height="96" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+        <rect x="676" y="448" width="40" height="16" rx="2" fill="none" stroke="rgba(79,93,117,0.4)" stroke-width="0.8"/>
+        <text x="696.0" y="459" fill="#2d3142" font-size="8" font-weight="500" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">STORE</text>
+        <text x="676" y="488" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif">Index store</text>
+        <text x="676" y="506" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">.codara/index-v2.sqlite</text>
+        <text x="676" y="518" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">meta, files, chunks, embeddings</text>
+        <rect x="912" y="292" width="200" height="96" rx="6" fill="#f5f5f5"/>
+        <rect x="912" y="292" width="200" height="96" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+        <rect x="924" y="304" width="34" height="16" rx="2" fill="none" stroke="rgba(79,93,117,0.4)" stroke-width="0.8"/>
+        <text x="941.0" y="315" fill="#2d3142" font-size="8" font-weight="500" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.08em">REPO</text>
+        <text x="924" y="344" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif">Repository files</text>
+        <text x="924" y="362" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">git ls-files, or walk</text>
+        <text x="924" y="374" fill="#4f5d75" font-size="9" font-family="'Geist Mono', ui-monospace, monospace">honors .gitignore/.codaraignore</text>
+        <line x1="40" y1="664" x2="1240" y2="664" stroke="rgba(45,49,66,0.1)" stroke-width="0.8"/>
+        <text x="40" y="692" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">LEGEND</text>
+        <rect x="120" y="684" width="24" height="14" rx="3" fill="rgba(79,93,117,0.1)" stroke="#5a6580" stroke-width="1"/>
+        <text x="152" y="694" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.12em">INPUT</text>
+        <rect x="248" y="684" width="24" height="14" rx="3" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1"/>
+        <text x="280" y="694" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.12em">FOCAL</text>
+        <rect x="360" y="684" width="24" height="14" rx="3" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <text x="392" y="694" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.12em">BACKEND</text>
+        <rect x="488" y="684" width="24" height="14" rx="3" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+        <text x="520" y="694" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.12em">STORE</text>
+        <rect x="600" y="684" width="24" height="14" rx="3" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.3)" stroke-width="1"/>
+        <text x="632" y="694" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.12em">EXTERNAL</text>
+        <path d="M744,688 H784" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <text x="792" y="694" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.12em">CALL</text>
+        <path d="M880,688 H920" fill="none" stroke="#2e5aa8" stroke-width="1.2" marker-end="url(#arrow-link)"/>
+        <text x="928" y="694" fill="#4f5d75" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.12em">EXTERNAL CALL</text>
+      </svg>
+    </div>
+    <p class="colophon">Config: CODARA_* environment variables, then ~/.codara/config.toml, then defaults. The server and the CLI both load it.</p>
+  </div>
+</body>
+</html>
